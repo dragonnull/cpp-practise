@@ -2,70 +2,48 @@
 #include <string>
 #include <stack>
 #include <vector>
+#include <unordered_map>
 
+using std::min;
 using std::stack;
 using std::string;
 using std::vector;
+using std::unordered_map;
+using std::to_string;
 
-class StackOfPlates
-{
+class Solution {
 public:
-    StackOfPlates(int cap)
-    {
-        if (cap < 0)
-            stackSize = 0;
-        else
-            stackSize = cap;
-    }
-
-    void push(int val)
-    {
-        if (stackSize == 0)
-            return;
-        if (setOfStacks.size() == 0)
-            setOfStacks.push_back(vector<int>{val});
-        else if (setOfStacks.back().size() == stackSize)
-            setOfStacks.push_back(vector<int>{val});
-        else
-            setOfStacks.back().push_back(val);
-    }
-
-    int pop()
-    {
-        if (setOfStacks.size() == 0)
+    int minOperationsMaxProfit(vector<int> &customers, int boardingCost, int runningCost) {
+        if (boardingCost * 4 < runningCost || customers.empty())
             return -1;
-        int res = setOfStacks.back().back();
-        setOfStacks.back().pop_back();
-        if (setOfStacks.back().size() == 0)
-            setOfStacks.pop_back();
+        int res = -1;
+        int deal = 0;
+        int waiting = 0;
+        int maxProfit = 0;
+        int nowProfit = 0;
+        int count = customers.size();
+        for (int i = 0; i < count || waiting > 0; ++i) {
+            if (i < count)
+                waiting += customers[i];
+            ++deal;
+            if (waiting <= 4) {
+                nowProfit += (waiting * boardingCost - runningCost);
+                waiting = 0;
+
+            } else {
+                nowProfit += (4 * boardingCost - runningCost);
+                waiting -= 4;
+            }
+            if (nowProfit > maxProfit) {
+                res = deal;
+                maxProfit = nowProfit;
+            }
+        }
         return res;
     }
-
-    int popAt(int index)
-    {
-        if (setOfStacks.size() == 0 || setOfStacks.size() <= index)
-            return -1;
-        int res = setOfStacks[index].back();
-        setOfStacks[index].pop_back();
-        if (setOfStacks[index].size() == 0)
-            setOfStacks.erase(setOfStacks.begin() + index);
-        return res;
-    }
-
-private:
-    vector<vector<int>> setOfStacks{};
-    int stackSize = 0;
 };
 
-/**
- * Your StackOfPlates object will be instantiated and called as such:
- * StackOfPlates* obj = new StackOfPlates(cap);
- * obj->push(val);
- * int param_2 = obj->pop();
- * int param_3 = obj->popAt(index);
- */
 
-int main()
-{
-    std::cout << "Hello, world!" << std::endl;
+int main() {
+
 }
