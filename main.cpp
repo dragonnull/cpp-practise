@@ -1,46 +1,46 @@
 #include <iostream>
+#include <set>
+#include <sstream>
 #include <string>
 #include <stack>
 #include <vector>
 #include <unordered_map>
 
 using std::min;
+using std::set;
 using std::stack;
 using std::string;
+using std::stringstream;
 using std::vector;
 using std::unordered_map;
 using std::to_string;
 
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 class Solution {
 public:
-    int minOperationsMaxProfit(vector<int> &customers, int boardingCost, int runningCost) {
-        if (boardingCost * 4 < runningCost || customers.empty())
-            return -1;
-        int res = -1;
-        int deal = 0;
-        int waiting = 0;
-        int maxProfit = 0;
-        int nowProfit = 0;
-        int count = customers.size();
-        for (int i = 0; i < count || waiting > 0; ++i) {
-            if (i < count)
-                waiting += customers[i];
-            ++deal;
-            if (waiting <= 4) {
-                nowProfit += (waiting * boardingCost - runningCost);
-                waiting = 0;
-
-            } else {
-                nowProfit += (4 * boardingCost - runningCost);
-                waiting -= 4;
-            }
-            if (nowProfit > maxProfit) {
-                res = deal;
-                maxProfit = nowProfit;
-            }
-        }
-        return res;
+    TreeNode *inorderSuccessor(TreeNode *root, TreeNode *p) {
+        if (root == nullptr) return nullptr;
+        if (root->val <= p->val) return inorderSuccessor(root->right, p);
+        TreeNode *ans = inorderSuccessor(root->left, p);
+        return ans == nullptr ? root : ans;
     }
+
+    TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q) {
+        if (root == nullptr || root == p || root == q) return root;
+        TreeNode *left = lowestCommonAncestor(root->left, p, q);
+        TreeNode *right = lowestCommonAncestor(root->right, p, q);
+        if (left && right)
+            return root;
+        return left ? left : right;
+    }
+
 };
 
 
