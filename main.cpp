@@ -32,45 +32,50 @@ struct TreeNode {
 
 class Solution {
 public:
-    vector<string> findLongestSubarray(vector<string> &array) {
-        int n = array.size();
-        int sum = 0;
-        unordered_map<int, int> record;
-        record[0] = -1;
-        int index = 0;
-        int len = 0;
-        for (int i = 0; i < n; ++i) {
-            if (array[i][0] >= '0' && array[i][0] <= '9') {
-                ++sum;
-            } else {
-                --sum;
-            }
-            auto it = record.find(sum);
-            if (it == record.end()) {
-                record[sum] = i;
-            } else {
-                if (len < i - it->second) {
-                    index = it->second + 1;
-                    len = i - it->second;
-                }
+    int rows;
+    int cols;
+    bool find = false;
+
+    vector<vector<int>> pathWithObstacles(vector<vector<int>> &obstacleGrid) {
+        vector<vector<int>> path;
+        rows = obstacleGrid.size();
+        cols = obstacleGrid[0].size();
+        vector<vector<bool>> visited(rows, vector<bool>(cols, false));
+        if (obstacleGrid[0][0] || obstacleGrid[rows - 1][cols - 1])
+            return path;
+        dfs(obstacleGrid, path, visited, 0, 0);
+        return path;
+    }
+
+    bool
+    dfs(vector<vector<int>> &obstacleGrid, vector<vector<int>> &path,
+        vector<vector<bool>> &visited, int row, int col) {
+        if (find) return true;
+        if (row >= rows || col >= cols || visited[row][col])
+            return false;
+        visited[row][col] = true;
+        path.push_back({row, col});
+        if ((row == rows - 1) && (col == cols - 1)) {
+            find = true;
+            return true;
+        }
+        if (row + 1 < rows && obstacleGrid[row + 1][col] != 1) {
+            if (dfs(obstacleGrid, path, visited, row + 1, col)) {
+                return true;
             }
         }
-        if (len == 0) {
-            return vector<string>();
-        } else {
-            return vector<string>(array.begin() + index, array.begin() + index + len);
+        if (col + 1 < cols && obstacleGrid[row][col + 1] != 1) {
+            if (dfs(obstacleGrid, path, visited, row, col + 1)) {
+                return true;
+            }
         }
+        path.pop_back();
+        return false;
     }
 };
 
 
 int main() {
     Solution s;
-    vector<string> test = {"A", "1"/*, "B", "C", "D", "2", "3", "4", "E", "5", "F", "G", "6", "7", "H", "I", "J", "K",
-                           "L", "M"*/};
-    vector<string> ans = s.findLongestSubarray(test);
-    for (const auto &str : ans) {
-        cout << str << "\t";
-    }
-    cout << endl;
+
 }
