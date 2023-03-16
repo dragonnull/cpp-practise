@@ -32,22 +32,27 @@ struct TreeNode {
 
 class Solution {
 public:
-    int countSubarrays(vector<int> &nums, int k) {
-        int pos = find(nums.cbegin(), nums.cend(), k) - nums.cbegin();
-        unordered_map<int, int> count{{0, 1}};
-        for (int i = pos - 1, x = 0; i >= 0; --i) {
-            x += nums[i] < k ? 1 : -1;
-            ++count[x];
+    vector<string> permutation(string S) {
+        vector<string> res;
+        res.push_back(S);
+        int SLen = S.size();
+        for (int i = 0; i < SLen; ++i) {
+            int size = res.size();
+            for (int j = i + 1; j < SLen; ++j) {
+                for (int index = 0; index < size; ++index) {
+                    res.push_back((swap(res[index], i, j)));
+                }
+            }
         }
-        int ans = count[0] + count[-1];
-        int len = nums.size();
-        for (int i = pos + 1, x = 0; i < len; ++i) {
-            x += nums[i] > k ? 1 : -1;
-            ans += count[x] + count[x - 1];
-        }
-        return ans;
+        return res;
     }
 
+    string swap(string s, int pos1, int pos2) {
+        s[pos1] ^= s[pos2];
+        s[pos2] ^= s[pos1];
+        s[pos1] ^= s[pos2];
+        return s;
+    }
 };
 
 
